@@ -11,7 +11,7 @@ const version = app.getVersion();
 const platform = os.platform() + "_" + os.arch();
 
 app.setAboutPanelOptions({
-  copyright: "Coppyright Technology Fixer Sato Takuya"
+  copyright: "Coppyright@ 2018 Technology Fixer Sato Takuya"
 });
 
 app.setLoginItemSettings({
