@@ -4,8 +4,13 @@ const electron = require("electron")
 const {app, BrowserWindow, autoUpdater, dialog, Menu, protocol, ipcMain, Tray} = electron
 
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
-process.env['GH_TOKEN'] = "98e0f3352dee20b0642e1197f547695b34c3ae8b";
+process.env['GH_TOKEN'] = "e13b60876067c9fdd95817da46e247de6bc6d117";
 
+// if (!isDev) {
+// autoUpdater.checkForUpdates();
+autoUpdater.checkForUpdatesAndNotify();
+// },4 * 60 * 60 * 1000);
+// }
 const log = require('electron-log');
 const path = require("path");
 
@@ -378,15 +383,10 @@ app.on("ready", async ()=> {
     }
   });
 
+  setTimeout(()=>{
+    autoUpdater.checkForUpdatesAndNotify();
+  }, 4 * 60 * 60 * 1000);
 
-  // if (!isDev) {
-    // autoUpdater.checkForUpdates();
-    await autoUpdater.checkForUpdatesAndNotify();
-    setTimeout(()=>{
-      autoUpdater.checkForUpdatesAndNotify();
-    }, 60 * 1000);
-    // },4 * 60 * 60 * 1000);
-  // }
 })
 
 app.on('window-all-closed', function() {
