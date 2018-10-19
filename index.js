@@ -18,9 +18,11 @@ let template = []
 let mainWindow
 const trayIconPath = path.join(__dirname, "tray.png")
 
-app.setAboutPanelOptions({
-  copyright: "Coppyright@ 2018 Technology Fixer Sato Takuya"
-});
+if (process.platform === 'darwin') {
+  app.setAboutPanelOptions({
+    copyright: "Coppyright@ 2018 Technology Fixer Sato Takuya"
+  });
+}
 
 app.setLoginItemSettings({
   openAtLogin: true
