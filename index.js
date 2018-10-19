@@ -18,16 +18,16 @@ let template = []
 let mainWindow
 const trayIconPath = path.join(__dirname, "tray.png")
 
+app.setAboutPanelOptions({
+  copyright: "Coppyright@ 2018 Technology Fixer Sato Takuya"
+});
+
+app.setLoginItemSettings({
+  openAtLogin: true
+});
+
 app.on("ready", async ()=> {
 
-
-  app.setAboutPanelOptions({
-    copyright: "Coppyright@ 2018 Technology Fixer Sato Takuya"
-  });
-
-  app.setLoginItemSettings({
-    openAtLogin: true
-  });
 
 
   appIcon = new Tray(trayIconPath);
