@@ -2,7 +2,10 @@ if (require('electron-squirrel-startup')) return;
 const os = require("os");
 const electron = require("electron")
 const {app, BrowserWindow, autoUpdater, dialog, Menu, protocol, ipcMain, Tray} = electron
+
 process.env['ELECTRON_DISABLE_SECURITY_WARNINGS'] = 'true';
+process.env['GH_TOKEN'] = "98e0f3352dee20b0642e1197f547695b34c3ae8b";
+
 const log = require('electron-log');
 const path = require("path");
 

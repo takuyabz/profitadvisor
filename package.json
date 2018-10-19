@@ -1,6 +1,6 @@
 {
   "name": "ProfitAdvisor",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "あなたのビジネスを加速する うたた寝アドバイザー",
   "main": "index.js",
   "scripts": {
