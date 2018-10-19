@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Document</title>
+  <style>
+      html {
+      height: 100%;
+      width: 100%;
+      margin:0;
+      padding:0;
+      overflow: hidden;
+    }
+    body {
+      padding:0;
+      margin: 0;
+      height: 100%;
+      width: 100%;
+      background-color: rgba(255, 255, 255, 0);
+      overflow: hidden;
+    }
+    ul {
+      opacity:0;
+      margin:0;
+      padding:0;
+      position:absolute;
+      /*left:20px;
+      top:20px;*/
+      right:0px;
+      bottom:0px;
+      list-style: none;
+      text-align:center;
+      color:black;
+      font-weight: bold;
+      font-size:48px;
+      -webkit-text-stroke: 1px #fff;
+      font-family: 'Hiragino Kaku Gothic Std';
+    }
+    li {
+      margin:0;
+      padding:0;
+      line-height:1.1em;
+    }
+    .title {
+        color:red;
+    }
+  </style>
+</head>
+<script>
+'use strict';
+
+const fs = require('fs');
+const {promisify} = require('util');
+const {google} = require('googleapis');
+const { OAuth2Client } = require("google-auth-library");
+const sheets = google.sheets('v4');
+const readFileAsync = promisify(fs.readFile);
+async function getData(options) {
+  return new Promise((resolve, reject) => {
+    sheets.spreadsheets.values.get({
+      auth: options.auth,
+      spreadsheetId: options.spreadsheetId,
+      range: options.range
+    }, (error, result) => {
+      if (error) {
+        return reject(error);
+      }
+      resolve(result);
+    });
+  });
+}
+
+const TOKEN_DIR = __dirname;
+const TOKEN_PATH = TOKEN_DIR + '/token.json';
+// const get = async (row = null) => {
+//     console.log(response.data.values.length);
+// };
+
+const defaultMessages = [
+  [
+    "稼ぐ方法",
+    "クライアントを探す",
+    "受注する",
+    "技術支援する",
+    "最初の一歩＝顧客の発見",
+    "顧客を探し始める"
+  ],
+  [
+    "ノウハウ反乱時代",
+    "継続は力",
+    "分野の仕事は全て読む",
+    "尊敬する人の所で働く",
+    "原則追求",
+    "自分の時間も確保する"
+  ],
+  [
+    "尊敬できる人と組め",
+    "メンターの仕事をする",
+    "尊敬できる人と",
+    "尊敬できる商品を",
+    "尊敬できる売り方で売る",
+    "１０年付き合う覚悟"
+  ],
+  [
+    "マインドセット",
+    "１日に３〜５個作る",
+    "どんどん貯めていく",
+    "毎日見る",
+    "貴重な財産",
+    "受け継ぐ資産"
+  ],
+  [
+    "顧客に考えさせない",
+    "質問を先回りする",
+    "メリットをとにかく提供",
+    "１vs１の対話から始まる",
+    "一人から始め多数へ",
+    "提供、提供、提供"
+  ],
+  [
+    "専門家から",
+    "マーケッターになる",
+    "エゴを消して",
+    "人を救う道を歩め",
+    "智慧を持ち",
+    "叡智を伝える"
+  ],
+  [
+    "従業員思考から",
+    "起業家思考へ",
+    "価値を構築して提供する",
+    "構築した価値を",
+    "たくさんの人へ",
+    "届けなさい"
+  ],
+  [
+    "やる人から",
+    "終わらせる人へ",
+    "手段は選ばない",
+    "結果を出せ",
+    "未完了を残さない",
+    "毎日完了させる"
+  ]
+];
+
+class Indexcard {
+  constructor() {
+    this.data = null;
+  }
+  async init() {
+    const content = await readFileAsync(__dirname+'/client_secret.json');
+    const credentials = JSON.parse(content);
+    const clientSecret = credentials.installed.client_secret;
+    const clientId = credentials.installed.client_id;
+    const redirectUrl = credentials.installed.redirect_uris[0];
+    const oauth2Client = new OAuth2Client(clientId, clientSecret, redirectUrl);
+    const token = await readFileAsync(TOKEN_PATH);
+    oauth2Client.credentials = JSON.parse(token);
+    const apiOptions = {
+      auth: oauth2Client,
+      spreadsheetId: '1eHA-gSQyQwNkYLtKfhUgE4pTknDdrKvNyMDr-ErTMGc',
+      range: 'master!A1:F10000',
+    };
+    const response = await getData(apiOptions);
+    this.data = response.data.values;
+  }
+
+  length() {
+    if (!this.data) return 0;
+    if (this.data.length) return this.data.length;
+    return 0;
+  }
+
+  messages(row=null) {
+    if (this.length() == 0) {
+      const index = Math.floor(Math.random() * Math.floor(defaultMessages.length));
+      return defaultMessages[index];
+    }
+    if (!row) {
+      const index = Math.floor(Math.random() * Math.floor(this.length()));
+      return this.data[index];
+    }
+    return this.data[row];
+  }
+}
+
+</script>
+<script>
+  const indexcard = new Indexcard();
+  window.onload = ()=>{
+    loop();
+  } 
+  const alertOnlineStatus = () => {
+    if (navigator.onLine) {
+      (async() => {
+        await indexcard.init();
+      })();
+    }
+  }
+  window.addEventListener('online',  alertOnlineStatus)
+  window.addEventListener('offline',  alertOnlineStatus)
+
+  function loop() {
+    setInterval(transition, 10 * 1000);
+    transition();
+  }
+  frame = 0;
+  fontSize = 48;
+  var card = {
+    width: fontSize * 12 + 40,
+    height: fontSize * 6 + 40
+  }
+  function transition() {
+    (async() => {
+      var elem = document.getElementById("message");
+      if (elem) {
+        elem.style.transition = "opacity 0.5s";
+        elem.style.opacity = 0;
+        await setTimeout( ()=>{
+          elem.style.opacity = 1;
+          document.body.removeChild(elem);
+        },500);
+      }
+ 
+      var ul = document.createElement("ul");
+      ul.setAttribute("id","message");
+      var messages = indexcard.messages();
+      for ([index,message] of messages.entries()) {
+        var li = document.createElement("li");
+        li.innerText = message;
+        if (index < 2) {
+          li.setAttribute("class","title");
+        }
+        ul.appendChild(li);
+      }
+      var li = document.createElement("li");
+      li.innerText = "うたた寝アドバイザー";
+      li.setAttribute("class","title"); 
+      ul.appendChild(li);
+
+      document.body.appendChild(ul);
+      ul.style.transition = "opacity 0.5s";
+      await setTimeout( ()=>{
+        ul.style.opacity = 1;
+      },500);
+      if (navigator.onLine) {
+        await indexcard.init();
+      }
+    })();
+  }
+</script>
+<body>
+</body>
+</html>
